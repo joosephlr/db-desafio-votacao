@@ -7,7 +7,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "votos")
+@Table(
+        name = "votos",
+        indexes = {
+                @Index(name = "idx_sessao_cpf", columnList = "sessao_id, cpf_associado", unique = true),
+                @Index(name = "idx_sessao_voto", columnList = "sessao_id, voto"),
+                @Index(name = "idx_cpf", columnList = "cpf_associado")
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +28,7 @@ public class Voto {
     @JoinColumn(name = "sessao_id", nullable = false)
     private Sessao sessao;
 
-    @Column(nullable = false)
+    @Column(name = "cpf_associado", nullable = false)
     private String cpfAssociado;
 
     @Column(nullable = false)
