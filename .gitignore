@@ -4,6 +4,27 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Banco de dados H2
+data/
+*.mv.db
+*.trace.db
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+*.swp
+*.swo
+
+# Build
+target/
+.classpath
+.project
+.settings/
+
 ### STS ###
 .apt_generated
 .classpath
