@@ -12,13 +12,11 @@ public class PautaService {
     @Autowired
     private PautaRepository pautaRepository;
 
-    // Criar nova pauta
     public Pauta criarPauta(PautaDTO dto) {
         Pauta pauta = new Pauta(dto.getDescricao());
         return pautaRepository.save(pauta);
     }
 
-    // Buscar pauta por ID
     public Pauta buscarPauta(Long id) {
         return pautaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pauta não encontrada"));

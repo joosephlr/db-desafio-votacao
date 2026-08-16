@@ -1,10 +1,10 @@
 package br.com.votacao.api.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +18,5 @@ public class VotoDTO {
     private String cpfAssociado;
 
     @NotNull(message = "Voto é obrigatório")
-    private Boolean voto; // true = Sim, false = Não
+    private Boolean voto;
 }

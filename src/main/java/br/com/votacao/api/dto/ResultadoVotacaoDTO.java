@@ -14,5 +14,5 @@ public class ResultadoVotacaoDTO {
     private Long totalVotos;
     private Long votosSim;
     private Long votosNao;
-    private String resultado; // "APROVADO" ou "REPROVADO"
+    private String resultado;
 }

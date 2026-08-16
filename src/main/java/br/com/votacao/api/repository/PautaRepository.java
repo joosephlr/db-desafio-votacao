@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
-    // JpaRepository já fornece: save, findById, findAll, delete, etc
+
 }

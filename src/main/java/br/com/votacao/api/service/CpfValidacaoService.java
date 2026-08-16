@@ -12,21 +12,16 @@ public class CpfValidacaoService {
 
     private final Random random = new Random();
 
-    /**
-     * Valida CPF usando algoritmo real + retorna status aleatório
-     */
     public CpfValidacaoDTO validarCpf(String cpf) {
 
         if (cpf == null || cpf.isEmpty()) {
             throw new CpfInvalidoException("CPF não pode ser vazio");
         }
 
-        // Validar CPF
         if (!validarCpfAlgoritmo(cpf)) {
             throw new CpfInvalidoException("CPF inválido");
         }
 
-        // CPF válido - retorna status aleatório
         VotoStatus status = random.nextBoolean() ?
                 VotoStatus.ABLE_TO_VOTE :
                 VotoStatus.UNABLE_TO_VOTE;
@@ -34,9 +29,6 @@ public class CpfValidacaoService {
         return new CpfValidacaoDTO(status);
     }
 
-    /**
-     * Valida CPF usando o algoritmo real do CPF brasileiro
-     */
     private boolean validarCpfAlgoritmo(String cpf) {
         cpf = cpf.replaceAll("[^0-9]", "");
 

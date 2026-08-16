@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface SessaoRepository extends JpaRepository<Sessao, Long> {
 
-    // Encontrar sessão ativa por pauta
     @Query("SELECT s FROM Sessao s WHERE s.pauta.id = :pautaId AND s.ativa = true")
     Optional<Sessao> findSessaoAtivaPorPauta(@Param("pautaId") Long pautaId);
 }
