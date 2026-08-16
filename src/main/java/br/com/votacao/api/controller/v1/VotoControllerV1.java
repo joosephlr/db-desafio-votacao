@@ -1,33 +1,34 @@
-package br.com.votacao.api.controller;
+package br.com.votacao.api.controller.v1;
 
 import br.com.votacao.api.dto.ResultadoVotacaoDTO;
 import br.com.votacao.api.dto.VotoDTO;
 import br.com.votacao.api.entity.Voto;
 import br.com.votacao.api.service.VotoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/votos")
-public class VotoController {
+@Tag(name = "Votos", description = "Registrar votos e obter resultados")
+public class VotoControllerV1 {
 
     @Autowired
     private VotoService votoService;
 
-    // Registrar voto
-    // POST http://localhost:8080/api/v1/votos
     @PostMapping
+    @Operation(summary = "Registrar voto", description = "Registra um novo voto em uma sessão de votação")
     public ResponseEntity<Voto> votar(@Valid @RequestBody VotoDTO dto) {
         Voto voto = votoService.votar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(voto);
     }
 
-    // Obter resultado da votação
-    // GET http://localhost:8080/api/v1/votos/resultado/1
     @GetMapping("/resultado/{sessaoId}")
+    @Operation(summary = "Obter resultado da votação", description = "Retorna os resultados consolidados de uma sessão de votação")
     public ResponseEntity<ResultadoVotacaoDTO> obterResultado(@PathVariable Long sessaoId) {
         ResultadoVotacaoDTO resultado = votoService.obterResultado(sessaoId);
         return ResponseEntity.ok(resultado);

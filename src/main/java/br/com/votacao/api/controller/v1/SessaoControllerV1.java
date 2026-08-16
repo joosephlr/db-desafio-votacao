@@ -1,32 +1,33 @@
-package br.com.votacao.api.controller;
+package br.com.votacao.api.controller.v1;
 
 import br.com.votacao.api.dto.SessaoDTO;
 import br.com.votacao.api.entity.Sessao;
 import br.com.votacao.api.service.SessaoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/sessoes")
-public class SessaoController {
+@Tag(name = "Sessões", description = "Gerenciar sessões de votação")
+public class SessaoControllerV1 {
 
     @Autowired
     private SessaoService sessaoService;
 
-    // Abrir sessão de votação
-    // POST http://localhost:8080/api/v1/sessoes
     @PostMapping
+    @Operation(summary = "Abrir sessão de votação", description = "Abre uma nova sessão para votação em uma pauta")
     public ResponseEntity<Sessao> abrirSessao(@Valid @RequestBody SessaoDTO dto) {
         Sessao sessao = sessaoService.abrirSessao(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(sessao);
     }
 
-    // Buscar sessão por ID
-    // GET http://localhost:8080/api/v1/sessoes/1
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar sessão por ID", description = "Retorna os detalhes de uma sessão específica")
     public ResponseEntity<Sessao> buscarSessao(@PathVariable Long id) {
         Sessao sessao = sessaoService.buscarSessao(id);
         return ResponseEntity.ok(sessao);
