@@ -1,5 +1,7 @@
 package br.com.votacao.api.dto;
 
+import br.com.votacao.api.enums.VotoStatus;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CpfValidacaoDTO {
-    private String status; // "ABLE_TO_VOTE" ou "UNABLE_TO_VOTE"
+    @JsonValue
+    private VotoStatus status;
 }

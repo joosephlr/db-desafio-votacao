@@ -1,128 +1,83 @@
 package br.com.votacao.api.service;
 
 import br.com.votacao.api.dto.CpfValidacaoDTO;
+import br.com.votacao.api.enums.VotoStatus;
 import br.com.votacao.api.exception.CpfInvalidoException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 @DisplayName("Testes do CpfValidacaoService")
 class CpfValidacaoServiceTest {
 
-    private CpfValidacaoService cpfValidacaoClient;
-
-    @BeforeEach
-    void setup() {
-        cpfValidacaoClient = new CpfValidacaoService();
-    }
+    @Autowired
+    private CpfValidacaoService cpfValidacaoService;
 
     @Test
-    @DisplayName("Deve validar CPF com formato correto")
-    void testValidarCpfFormatoCorreto() {
-        // Arrange
-        String cpf = "12345678900"; // 11 dígitos
-
+    @DisplayName("Deve rejeitar CPF nulo")
+    void testValidarCpfNulo() {
         // Act & Assert
-        // Pode retornar ABLE_TO_VOTE ou UNABLE_TO_VOTE ou lançar exceção
-        // Vamos testar múltiplas vezes pois é aleatório
-        boolean temResultado = false;
-        for (int i = 0; i < 100; i++) {
-            try {
-                CpfValidacaoDTO resultado = cpfValidacaoClient.validarCpf(cpf);
-                assertNotNull(resultado);
-                assertTrue(resultado.getStatus().equals("ABLE_TO_VOTE") ||
-                        resultado.getStatus().equals("UNABLE_TO_VOTE"));
-                temResultado = true;
-                break;
-            } catch (CpfInvalidoException e) {
-                // Esperado às vezes (CPF inválido aleatório)
-            }
-        }
-        assertTrue(temResultado, "Deveria ter validado o CPF com sucesso em alguma tentativa");
+        CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
+                () -> cpfValidacaoService.validarCpf(null));
+
+        assertEquals("CPF não pode ser vazio", exception.getMessage());
     }
 
     @Test
     @DisplayName("Deve rejeitar CPF com menos de 11 dígitos")
-    void testValidarCpfComMenosDeDezDigitos() {
-        // Arrange
-        String cpf = "1234567890"; // 10 dígitos
-
+    void testValidarCpfComMenosDezDigitos() {
         // Act & Assert
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
-                () -> cpfValidacaoClient.validarCpf(cpf));
+                () -> cpfValidacaoService.validarCpf("1234567890"));
 
-        assertEquals("Formato de CPF inválido", exception.getMessage());
+        assertEquals("CPF inválido", exception.getMessage());
     }
 
     @Test
     @DisplayName("Deve rejeitar CPF com mais de 11 dígitos")
-    void testValidarCpfComMaisDeDezDigitos() {
-        // Arrange
-        String cpf = "123456789001"; // 12 dígitos
-
+    void testValidarCpfComMaisDezDigitos() {
         // Act & Assert
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
-                () -> cpfValidacaoClient.validarCpf(cpf));
+                () -> cpfValidacaoService.validarCpf("123456789001"));
 
-        assertEquals("Formato de CPF inválido", exception.getMessage());
+        assertEquals("CPF inválido", exception.getMessage());
     }
 
     @Test
     @DisplayName("Deve rejeitar CPF com caracteres não numéricos")
     void testValidarCpfComCaracteresNaoNumericos() {
-        // Arrange
-        String cpf = "1234567890a"; // Contém letra
-
         // Act & Assert
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
-                () -> cpfValidacaoClient.validarCpf(cpf));
+                () -> cpfValidacaoService.validarCpf("1234567890a"));
 
-        assertEquals("Formato de CPF inválido", exception.getMessage());
+        assertEquals("CPF inválido", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Deve rejeitar CPF nulo")
-    void testValidarCpfNulo() {
-        // Arrange
-        String cpf = null;
-
+    @DisplayName("Deve validar CPF válido e retornar status")
+    void testValidarCpfValido() {
         // Act & Assert
-        CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
-                () -> cpfValidacaoClient.validarCpf(cpf));
+        CpfValidacaoDTO resultado = cpfValidacaoService.validarCpf("11144477735");
 
-        assertEquals("Formato de CPF inválido", exception.getMessage());
+        assertNotNull(resultado);
+        assertNotNull(resultado.getStatus());
+        assertTrue(
+                resultado.getStatus().equals(VotoStatus.ABLE_TO_VOTE) ||
+                        resultado.getStatus().equals(VotoStatus.UNABLE_TO_VOTE)
+        );
     }
 
     @Test
-    @DisplayName("Deve retornar status válido quando CPF é aceito")
-    void testRetornarStatusValido() {
-        // Arrange
-        String cpf = "12345678900";
-
+    @DisplayName("Deve rejeitar CPF com todos os dígitos iguais")
+    void testValidarCpfTodosDigitosIguais() {
         // Act & Assert
-        // Testar múltiplas vezes pois é aleatório
-        boolean temAbleToVote = false;
-        boolean temUnableToVote = false;
+        CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
+                () -> cpfValidacaoService.validarCpf("11111111111"));
 
-        for (int i = 0; i < 1000; i++) {
-            try {
-                CpfValidacaoDTO resultado = cpfValidacaoClient.validarCpf(cpf);
-                if ("ABLE_TO_VOTE".equals(resultado.getStatus())) {
-                    temAbleToVote = true;
-                } else if ("UNABLE_TO_VOTE".equals(resultado.getStatus())) {
-                    temUnableToVote = true;
-                }
-                if (temAbleToVote && temUnableToVote) {
-                    break;
-                }
-            } catch (CpfInvalidoException e) {
-                // Esperado às vezes
-            }
-        }
-
-        assertTrue(temAbleToVote, "Deveria ter retornado ABLE_TO_VOTE em alguma tentativa");
-        assertTrue(temUnableToVote, "Deveria ter retornado UNABLE_TO_VOTE em alguma tentativa");
+        assertEquals("CPF inválido", exception.getMessage());
     }
 }

@@ -4,10 +4,11 @@ import br.com.votacao.api.dto.VotoDTO;
 import br.com.votacao.api.entity.Pauta;
 import br.com.votacao.api.entity.Sessao;
 import br.com.votacao.api.entity.Voto;
+import br.com.votacao.api.enums.VotoStatus;
 import br.com.votacao.api.repository.VotoRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -17,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @DisplayName("Testes de Performance do VotoService")
 class VotoPerformanceServiceTest {
@@ -59,18 +61,16 @@ class VotoPerformanceServiceTest {
     @Test
     @DisplayName("Deve processar 10000 votos em menos de 30 segundos")
     void testPerformance10000Votos() {
-        // Arrange
+
         int quantidadeVotos = 10000;
         long inicio = System.currentTimeMillis();
 
         when(sessaoService.buscarSessao(1L)).thenReturn(sessaoMock);
         when(sessaoService.sessaoEstaAberta(sessaoMock)).thenReturn(true);
-        when(cpfValidacaoService.validarCpf(any()))
-                .thenReturn(new br.com.votacao.api.dto.CpfValidacaoDTO("ABLE_TO_VOTE"));
+        when(cpfValidacaoService.validarCpf(any())).thenReturn(new br.com.votacao.api.dto.CpfValidacaoDTO(VotoStatus.ABLE_TO_VOTE));
         when(votoRepository.findVotoPorCpfNaSessao(any(), any())).thenReturn(Optional.empty());
         when(votoRepository.save(any(Voto.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         for (int i = 0; i < quantidadeVotos; i++) {
             VotoDTO dto = new VotoDTO(1L, String.format("%011d", i), i % 2 == 0);
             votoService.votar(dto);
@@ -79,7 +79,6 @@ class VotoPerformanceServiceTest {
         long fim = System.currentTimeMillis();
         long duracao = fim - inicio;
 
-        // Assert
         assertTrue(duracao < 30000,
                 String.format("Processamento de %d votos levou %d ms (máximo: 30000 ms)",
                         quantidadeVotos, duracao));
@@ -91,13 +90,12 @@ class VotoPerformanceServiceTest {
     @Test
     @DisplayName("Deve contar votos eficientemente")
     void testPerformanceContagemVotos() {
-        // Arrange
+
         long sessaoId = 1L;
 
         when(votoRepository.countVotosSim(sessaoId)).thenReturn(5000L);
         when(votoRepository.countVotosNao(sessaoId)).thenReturn(5000L);
 
-        // Act
         long inicio = System.currentTimeMillis();
 
         Long votosSim = votoRepository.countVotosSim(sessaoId);
@@ -105,7 +103,6 @@ class VotoPerformanceServiceTest {
 
         long fim = System.currentTimeMillis();
 
-        // Assert
         assertEquals(5000L, votosSim);
         assertEquals(5000L, votosNao);
         assertTrue((fim - inicio) < 1000, "Contagem deveria ser rápida (< 1 segundo)");
