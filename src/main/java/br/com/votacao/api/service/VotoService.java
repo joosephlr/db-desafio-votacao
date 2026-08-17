@@ -57,7 +57,20 @@ public class VotoService {
         Long votosNao = votoRepository.countVotosNao(sessaoId);
         Long totalVotos = votosSim + votosNao;
 
-        String resultado = votosSim > votosNao ? "APROVADO" : "REPROVADO";
+        String resultado = "";
+
+        if(votosSim > votosNao)
+        {
+            resultado = "APROVADO";
+        }
+        else if(votosNao > votosSim)
+        {
+            resultado = "REPROVADO";
+        }
+        else
+        {
+            resultado = "EMPATE";
+        }
 
         return new ResultadoVotacaoDTO(
                 sessao.getPauta().getId(),
