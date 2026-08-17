@@ -15,7 +15,6 @@ API REST para gerenciamento de sessões de votação em assembleias cooperativas
 - [Banco de Dados](#banco-de-dados)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Funcionalidades Implementadas](#funcionalidades-implementadas)
-- [Troubleshooting](#troubleshooting)
 
 ---
 
