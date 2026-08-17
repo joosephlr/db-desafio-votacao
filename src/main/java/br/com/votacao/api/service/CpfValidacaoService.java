@@ -4,13 +4,11 @@ import br.com.votacao.api.dto.CpfValidacaoDTO;
 import br.com.votacao.api.enums.VotoStatus;
 import br.com.votacao.api.exception.CpfInvalidoException;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
-@Component
+@Service
 public class CpfValidacaoService {
 
     private final Random random;

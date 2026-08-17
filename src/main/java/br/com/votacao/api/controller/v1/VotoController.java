@@ -7,20 +7,19 @@ import br.com.votacao.api.service.VotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/votos")
+@AllArgsConstructor
 @Tag(name = "Votos", description = "Registrar votos e obter resultados")
 public class VotoController {
 
     private final VotoService votoService;
-
-    public VotoController(VotoService votoService) {
-        this.votoService = votoService;
-    }
 
     @PostMapping
     @Operation(summary = "Registrar voto", description = "Registra um novo voto em uma sessão de votação")
