@@ -6,7 +6,6 @@ import br.com.votacao.api.service.SessaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/sessoes")
 @Tag(name = "Sessões", description = "Gerenciar sessões de votação")
-public class SessaoControllerV1 {
+public class SessaoController {
 
-    @Autowired
-    private SessaoService sessaoService;
+    private final SessaoService sessaoService;
+
+    public SessaoController(SessaoService sessaoService) {
+        this.sessaoService = sessaoService;
+    }
 
     @PostMapping
     @Operation(summary = "Abrir sessão de votação", description = "Abre uma nova sessão para votação em uma pauta")

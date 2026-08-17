@@ -5,22 +5,19 @@ import br.com.votacao.api.enums.VotoStatus;
 import br.com.votacao.api.exception.CpfInvalidoException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 @DisplayName("Testes do CpfValidacaoService")
 class CpfValidacaoServiceTest {
 
-    @Autowired
     private CpfValidacaoService cpfValidacaoService;
 
     @Test
     @DisplayName("Deve rejeitar CPF nulo")
     void testValidarCpfNulo() {
-        // Act & Assert
+        cpfValidacaoService = new CpfValidacaoService();
+
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
                 () -> cpfValidacaoService.validarCpf(null));
 
@@ -30,7 +27,8 @@ class CpfValidacaoServiceTest {
     @Test
     @DisplayName("Deve rejeitar CPF com menos de 11 dígitos")
     void testValidarCpfComMenosDezDigitos() {
-        // Act & Assert
+        cpfValidacaoService = new CpfValidacaoService();
+
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
                 () -> cpfValidacaoService.validarCpf("1234567890"));
 
@@ -40,7 +38,8 @@ class CpfValidacaoServiceTest {
     @Test
     @DisplayName("Deve rejeitar CPF com mais de 11 dígitos")
     void testValidarCpfComMaisDezDigitos() {
-        // Act & Assert
+        cpfValidacaoService = new CpfValidacaoService();
+
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
                 () -> cpfValidacaoService.validarCpf("123456789001"));
 
@@ -50,7 +49,8 @@ class CpfValidacaoServiceTest {
     @Test
     @DisplayName("Deve rejeitar CPF com caracteres não numéricos")
     void testValidarCpfComCaracteresNaoNumericos() {
-        // Act & Assert
+        cpfValidacaoService = new CpfValidacaoService();
+
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
                 () -> cpfValidacaoService.validarCpf("1234567890a"));
 
@@ -58,23 +58,21 @@ class CpfValidacaoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve validar CPF válido e retornar status")
-    void testValidarCpfValido() {
-        // Act & Assert
+    @DisplayName("Deve validar CPF válido e retornar ABLE_TO_VOTE")
+    void testValidarCpfValidoAbleToVote() {
+        cpfValidacaoService = new CpfValidacaoService();
+
         CpfValidacaoDTO resultado = cpfValidacaoService.validarCpf("11144477735");
 
         assertNotNull(resultado);
-        assertNotNull(resultado.getStatus());
-        assertTrue(
-                resultado.getStatus().equals(VotoStatus.ABLE_TO_VOTE) ||
-                        resultado.getStatus().equals(VotoStatus.UNABLE_TO_VOTE)
-        );
+        assertEquals(VotoStatus.ABLE_TO_VOTE, resultado.getStatus());
     }
 
     @Test
     @DisplayName("Deve rejeitar CPF com todos os dígitos iguais")
     void testValidarCpfTodosDigitosIguais() {
-        // Act & Assert
+        cpfValidacaoService = new CpfValidacaoService();
+
         CpfInvalidoException exception = assertThrows(CpfInvalidoException.class,
                 () -> cpfValidacaoService.validarCpf("11111111111"));
 

@@ -4,7 +4,6 @@ import br.com.votacao.api.dto.SessaoDTO;
 import br.com.votacao.api.entity.Pauta;
 import br.com.votacao.api.entity.Sessao;
 import br.com.votacao.api.repository.SessaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,11 +11,13 @@ import java.time.LocalDateTime;
 @Service
 public class SessaoService {
 
-    @Autowired
-    private SessaoRepository sessaoRepository;
+    private final SessaoRepository sessaoRepository;
+    private final PautaService pautaService;
 
-    @Autowired
-    private PautaService pautaService;
+    public SessaoService(SessaoRepository sessaoRepository, PautaService pautaService) {
+        this.sessaoRepository = sessaoRepository;
+        this.pautaService = pautaService;
+    }
 
     public Sessao abrirSessao(SessaoDTO dto) {
         Pauta pauta = pautaService.buscarPauta(dto.getPautaId());

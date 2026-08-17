@@ -8,20 +8,20 @@ import br.com.votacao.api.entity.Voto;
 import br.com.votacao.api.enums.VotoStatus;
 import br.com.votacao.api.exception.CpfInvalidoException;
 import br.com.votacao.api.repository.VotoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VotoService {
 
-    @Autowired
-    private VotoRepository votoRepository;
+    private final VotoRepository votoRepository;
+    private final SessaoService sessaoService;
+    private final CpfValidacaoService cpfValidacaoService;
 
-    @Autowired
-    private SessaoService sessaoService;
-
-    @Autowired
-    private CpfValidacaoService cpfValidacaoService;
+    public VotoService(VotoRepository votoRepository, SessaoService sessaoService, CpfValidacaoService cpfValidacaoService) {
+        this.votoRepository = votoRepository;
+        this.sessaoService = sessaoService;
+        this.cpfValidacaoService = cpfValidacaoService;
+    }
 
     public Voto votar(VotoDTO dto) {
 
@@ -46,6 +46,7 @@ public class VotoService {
         }
 
         Voto voto = new Voto(sessao, dto.getCpfAssociado(), dto.getVoto());
+
         return votoRepository.save(voto);
     }
 
